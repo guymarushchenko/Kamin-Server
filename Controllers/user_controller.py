@@ -22,6 +22,10 @@ class UserController:
                         permission=user_dict['permission'])
         return user
 
+    def get_users(self):
+        users_list, moderators_list = self.db_management.get_users()
+        return users_list, moderators_list
+
     def change_user_permission(self, user, permission):
         user.set_permission(permission)
         result = self.db_management.change_user_permission(user, permission)

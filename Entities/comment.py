@@ -10,10 +10,9 @@ class Comment:
         self.parent_id = kwargs.get('parent_id', '')
         self.discussion_id = kwargs.get('discussion_id', '')
         self.extra_data = kwargs.get('extra_data', {})
-        self.actions = kwargs.get('actions', [])
-        self.labels = kwargs.get('labels', [])
         self.depth = kwargs.get('depth', 0)
-        self.time_stamp = kwargs.get('time_stamp', datetime.now())
+        self.timestamp = kwargs.get('timestamp', datetime.now().timestamp())
+        self.is_alert = kwargs.get('is_alert', False)
 
     """
     extra_data dict_keys(['file:line', 'subreddit', 'from_kind', 'from', 'title', 'num_comments', 'subreddit_id',
@@ -56,38 +55,23 @@ class Comment:
     def set_depth(self, input_depth):
         self.depth = input_depth
 
-    def get_time_stamp(self):
-        return self.time_stamp
+    def get_timestamp(self):
+        return self.timestamp
 
-    def set_time_stamp(self, input_time_stamp):
-        self.time_stamp = input_time_stamp
-
-    def serialize(self):
-        return self.__dict__
-
-    def get_actions(self):
-        return self.actions
-
-    def set_actions(self, input_comment_actions):
-        self.actions = input_comment_actions
-
-    def add_action(self, action):
-        self.actions.append(action)
-
-    def get_labels(self):
-        return self.labels
-
-    def set_labels(self, input_comment_labels):
-        self.labels = input_comment_labels
-
-    def add_label(self, comment_tag):
-        self.labels.append(comment_tag)
+    def set_timestamp(self, input_timestamp):
+        self.timestamp = input_timestamp
 
     def get_extra_data(self):
         return self.extra_data
 
     def set_extra_data(self, extra_data):
         self.extra_data = extra_data
+
+    def get_is_alert(self):
+        return self.is_alert
+
+    def set_is_alert(self, is_alert):
+        self.is_alert = is_alert
 
     def get_depth_space(self):
         space = ""
@@ -97,7 +81,7 @@ class Comment:
 
     def __str__(self):
         return self.get_depth_space() + str(self._id) + ", " + self.author + ": " + str(
-            self.get_time_stamp()) + ", depth = " + str(self.get_depth()) + ", parent id = " + str(
+            self.get_timestamp()) + ", depth = " + str(self.get_depth()) + ", parent id = " + str(
             self.parent_id)
 
 
@@ -106,8 +90,6 @@ class CommentNode(Comment):
         super().__init__(*args, **kwargs)
         self._id = kwargs.get('id', "")
         self.child_comments = kwargs.get('child_comments', [])
-        self.is_alerted = kwargs.get('is_alerted', False)
-        self.alert = kwargs.get('alert', "")
 
     def add_child_comment(self, comment):
         self.child_comments.append(comment)
@@ -125,11 +107,10 @@ class CommentNode(Comment):
             "parentId": self.parent_id,
             "discussionId": self.discussion_id,
             "depth": self.depth,
-            "time_stamp": self.time_stamp,
-            "labels": self.labels,
-            "actions": self.actions,
+            "timestamp": self.timestamp,
             "extra_data": self.extra_data,
-            "child_comments": self.child_comments
+            "child_comments": self.child_comments,
+            "is_alert": self.is_alert
         }
 
     def to_client_dict(self):
@@ -140,10 +121,7 @@ class CommentNode(Comment):
             "parentId": self.parent_id,
             "discussionId": self.discussion_id,
             "depth": self.depth,
-            "time_stamp": self.time_stamp,
-            "labels": self.labels,
-            "actions": self.actions,
+            "timestamp": self.timestamp,
             "extra_data": self.extra_data,
-            "isAlerted": self.is_alerted,
-            "alert": self.alert
+            "is_alert": self.is_alert
         }
